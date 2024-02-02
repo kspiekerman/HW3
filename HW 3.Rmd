@@ -1,0 +1,160 @@
+---
+title: "HW 3"
+author: "Kate Spiekerman, kls5665"
+output:
+  html_document: default
+  pdf_document: default
+  word_document: default
+---
+
+```{r global_options, echo=FALSE}
+knitr::opts_chunk$set(fig.height=4, fig.width=5, warning=FALSE, tidy=TRUE, tidy.opts=list(width.cutoff=60))
+```
+
+## **Question 1**
+
+**Part A**
+
+```{r, echo=FALSE, message=FALSE}
+creatinine <- read.csv('creatinine.csv')
+library(ggplot2)
+library(tidyverse)
+```
+
+```{r, echo=FALSE}
+
+model_med <- lm(creatclear ~ age, data= creatinine)
+coef(model_med) %>% round(2)
+
+147.81-.62*55
+```
+The regression line for this data set is 147.81-.62 * age. So if you plug in 55 for age, you get a reatinine clearance rate of 113.71. 
+
+**Part B**
+
+The creatinine clearance rate changes by (on average) .62ml/minute per year. This is the slope of the regression line determined in part a. 
+
+**Part C**
+
+```{r, echo=FALSE}
+135-(147.81-.62*40)
+
+112-(147.81-.62*60)
+
+```
+A 40 year old with a rate of 135 produces a residual of 11.99, while a 60 year old with a rate of 112 produces a residual of 1.39. Although both individuals are higher than their expected value, the 40 year old is healthier for their age because 11.99 is greater than 1.39. 
+
+
+## **Question 2**
+
+```{r, echo=FALSE, eval=FALSE}
+market <- read.csv('marketmodel.csv')
+
+apple = lm(AAPL ~ SPY, data= market)
+coef(apple) %>% round(4)
+summary(apple)
+
+google = lm(GOOG ~ SPY, data= market)
+coef(google) %>% round(4)
+summary(google)
+
+merck = lm(MRK ~ SPY, data= market)
+coef(merck) %>% round(4)
+summary(merck)
+
+johnson = lm(JNJ ~ SPY, data= market)
+coef(johnson) %>% round(4)
+summary(johnson)
+
+walmart = lm(WMT ~ SPY, data= market)
+coef(walmart) %>% round(4)
+summary(walmart)
+
+target = lm(TGT ~ SPY, data= market)
+coef(target) %>% round(4)
+summary(target)
+
+
+```
+
+Beta measures how strongly the outcome of the entire market affects the sales of an individual firm. It is measured using a linear model where the entire market is the x value and the individual firm is the y value. Because of this model, the slope of the linear regression represents beta. This is because for every percent that x goes up, the slope represents how much y changes. The less that a beta value is than 1 means that the firms sales are less affected by the entire market. This means that these firms are not as affected when the general market is failing, because there is less correlation between the two. This inverse of this is also true. The greater that a beta value than 1 means that the firms sales are more affected by the general market. For these firms, when the entire market is failing, they are much more affected.  
+
+
+```{r, echo=FALSE}
+
+ticker_symbol <- c('AAPL', 'GOOG', 'MRK', 'JNJ', 'WMT', 'TGT')
+intercept <- c(.0092,.0002, -.0002, 0, .0007, .0016)
+slope <- c(1.0656, .9968, .7136, .6772, .5190, .7076)
+r_squared <- c(.0110, .6475, .4825, .5008, .2836, .2461)
+
+table <- tibble(ticker_symbol, intercept, slope, r_squared)
+table
+```
+
+This table shows 6 different companies and the intercept, slope, and r squared value of their linear regression. The regressions are between the individual firm and the entire market, so the slope value shows the beta value. 
+
+Overall, Walmart has the lowest systematic risk because it has the smallest beta value. Additionally, Apple has the highest systematic risk because it has the largest beta value. 
+
+
+## **Question 3**
+
+```{r, echo=FALSE}
+covid <- read.csv('covid.csv')
+
+spain <- covid %>%
+  filter(country == 'Spain')
+italy <- covid %>%
+  filter(country == 'Italy')
+
+italy_2 <- italy %>%
+  mutate(natural_log = log(deaths))
+
+italy_3 = lm(natural_log ~ days_since_first_death, data=italy_2)
+coef(italy_3) %>% round(3)
+
+70/.183
+
+spain_2 <- spain %>%
+  mutate(natural_log = log(deaths))
+
+spain_3 = lm(natural_log ~ days_since_first_death, data=spain_2)
+coef(spain_3) %>% round(3)
+
+70/.276
+```
+
+The estimated growth rate for Italy is .183. The estimated doubling time for Italy is 383 days.
+The estimated growth rate for Spain is .276. The estimated doubling time for Italy is 254 days.
+
+```{r, echo=FALSE}
+ggplot(covid) +
+  geom_line(aes(x=days_since_first_death, y=deaths, col= country))+
+  labs(x= 'Days Since First Death', y= 'Deaths', title= 'Relationship Between Days Since First Death and Covid Deaths') +
+  theme_classic()
+
+```
+
+## **Question 4**
+
+```{r, echo=FALSE}
+milk <- read.csv('milk.csv')
+
+milk_2 <- milk %>%
+  mutate(natural_log_q = log(sales))
+
+milk_3 <- milk_2 %>%
+  mutate(natural_log_p = log(price))
+
+milk_4 = lm(natural_log_q ~ natural_log_p, data=milk_3)
+coef(milk_4) %>% round(3)
+
+```
+
+The elasticity of demand for milk is -1.619. I found this by taking the natural log of both sides of the equation given. After this I mutated the data so that it matched the new equation. After this I found the coefficient of the two variables to find the price elasticity of demand.  
+
+
+
+
+
+
+
